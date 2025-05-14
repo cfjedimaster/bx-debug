@@ -52,7 +52,7 @@ class {
 		<strong>Request duration:</strong> #numberFormat(debug.requestTotal)# ms<br>
 		</p>
 		</bx:output>
-		
+
 		<h2>Queries</h2>
 
 		<bx:if debug.queries.len() gt 0>
@@ -98,7 +98,6 @@ class {
 		</div>
 		```
 		};
-
 
 		writeOutput(html);
 

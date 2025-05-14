@@ -3,8 +3,12 @@ class {
 	property name="moduleRecord";
 	property name="boxRuntime";
 
+	this.version = "0.0.1";
+	this.author = "Raymond Camden";
+	this.description = "Adds debug output support to BoxLang web apps.";
+	this.webURL = "https://github.com/cfjedimaster/bx-debug";
+
 	function configure() {
-		println('debug module configure');
 
 		interceptors = [
 			{ class='#moduleRecord.invocationPath#.interceptors.debuginterceptor' }
