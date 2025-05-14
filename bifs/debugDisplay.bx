@@ -15,16 +15,17 @@ class {
     function invoke() {
 		debug = getDebug();
 
-		html = "
+		bx:saveContent variable="html" {
+		```
 		<style>
-		div##debugModule {
+		div#debugModule {
 
 			hr {
 				margin: 30px 0;   
 				border: 0;
 				height: 4px;
-				background: ##ff0000;
-				background: linear-gradient(-45deg, ##ff0000 0%,##ffff00 25%,##00ff00 50%,##00ffff 75%,##0000ff 100%);
+				background: #ff0000;
+				background: linear-gradient(-45deg, #ff0000 0%,#ffff00 25%,#00ff00 50%,#00ffff 75%,#0000ff 100%);
 			}
 
 			table {
@@ -45,37 +46,36 @@ class {
 		<hr>
 		<h2>BL Debug Info</h2>
 
+		<bx:output>
 		<p>
 		<strong>Request template:</strong> #debug.requestTemplate#<br>
 		<strong>Request duration:</strong> #numberFormat(debug.requestTotal)# ms<br>
 		</p>
-
+		</bx:output>
+		
 		<h2>Queries</h2>
-		";
 
-		if(debug.queries.len() > 0) {
-			html &= "
+		<bx:if debug.queries.len() gt 0>
 			<table>
 			<thead>
 			<tr><th>SQL</th><th>Records</th><th>Execution Time</tr>
 			</thead>
-			<tbody>
-			";
-		
+			<tbody>		
 
-			for(q in debug.queries) {
-				html &= "
-				<tr><td>#q.sql#</td><td>#q.records#</td><td>#numberFormat(q.executionTime)#</td></tr>
-				"
-			}
 
-			html &= "</tbody></table>";
+			<bx:loop item="q" array="#debug.queries#">
+				<bx:output>
+					<tr>
+						<td>#q.sql#</td><td>#q.records#</td><td>#numberFormat(q.executionTime)#</td>
+					</tr>
+				</bx:output>
+			</bx:loop>
+			</tbody>
+			</table>
+		<bx:else>
+		<p>No database activity.</p>
+		</bx:if>
 
-		} else {
-			html &= "<p>No database activity.</p>";
-		}
-
-		html &= "
 		<h2>Template Executions</h2>
 
 		<table>
@@ -83,19 +83,22 @@ class {
 		<tr><th>Path</th><th>Execution Time</th></tr>
 		</thead>
 		<tbody>
-		";
 
-		for(t in debug.templateStack) {
-			html &= "
-			<tr>
-			<td>#t.path#</td><td>#numberFormat(t.ended-t.started)# ms</td>
-			</tr>
-			"
-		}
+		<bx:loop item="t" array="#debug.templateStack#">
+			<bx:output>
+				<tr>
+					<td>#t.path#</td><td>#numberFormat(t.ended-t.started)# ms</td>
+				</tr>
+			</bx:output>
+		</bx:loop>
 
-		html &= "</tbody></table>";
+		</tbody>
+		</table>
 
-		html &= "</div>";
+		</div>
+		```
+		};
+
 
 		writeOutput(html);
 
