@@ -1,0 +1,13 @@
+class {
+
+	property name="moduleRecord";
+	property name="boxRuntime";
+
+	function configure() {
+		println('debug module configure');
+
+		interceptors = [
+			{ class='#moduleRecord.invocationPath#.interceptors.debuginterceptor' }
+		];
+	}
+}

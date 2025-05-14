@@ -1,0 +1,106 @@
+@BoxBIF
+class {
+
+	/*
+	copied from the interceptor - consider migrating to one place
+	*/
+	private function getDebug() {
+		requestContext = getBoxContext().getRequestContext()
+		return requestContext.computeAttachmentIfAbsent( "debug", ()->structNew() )
+	}
+
+	function init() {
+	}
+
+    function invoke() {
+		debug = getDebug();
+
+		html = "
+		<style>
+		div##debugModule {
+
+			hr {
+				margin: 30px 0;   
+				border: 0;
+				height: 4px;
+				background: ##ff0000;
+				background: linear-gradient(-45deg, ##ff0000 0%,##ffff00 25%,##00ff00 50%,##00ffff 75%,##0000ff 100%);
+			}
+
+			table {
+				border-collapse: collapse;
+				border: 1px solid black;
+				width: 100%;
+				max-width: 500px;
+			}
+
+			th, td {
+				border: 1px solid black;
+				padding: 5px; 
+			}
+		}
+		</style>
+
+		<div id='debugModule'>
+		<hr>
+		<h2>BL Debug Info</h2>
+
+		<p>
+		<strong>Request template:</strong> #debug.requestTemplate#<br>
+		<strong>Request duration:</strong> #numberFormat(debug.requestTotal)# ms<br>
+		</p>
+
+		<h2>Queries</h2>
+		";
+
+		if(debug.queries.len() > 0) {
+			html &= "
+			<table>
+			<thead>
+			<tr><th>SQL</th><th>Records</th><th>Execution Time</tr>
+			</thead>
+			<tbody>
+			";
+		
+
+			for(q in debug.queries) {
+				html &= "
+				<tr><td>#q.sql#</td><td>#q.records#</td><td>#numberFormat(q.executionTime)#</td></tr>
+				"
+			}
+
+			html &= "</tbody></table>";
+
+		} else {
+			html &= "<p>No database activity.</p>";
+		}
+
+		html &= "
+		<h2>Template Executions</h2>
+
+		<table>
+		<thead>
+		<tr><th>Path</th><th>Execution Time</th></tr>
+		</thead>
+		<tbody>
+		";
+
+		for(t in debug.templateStack) {
+			html &= "
+			<tr>
+			<td>#t.path#</td><td>#numberFormat(t.ended-t.started)# ms</td>
+			</tr>
+			"
+		}
+
+		html &= "</tbody></table>";
+
+		html &= "</div>";
+
+		writeOutput(html);
+
+		writedump(var=debug,expand=false);
+
+    }
+
+}

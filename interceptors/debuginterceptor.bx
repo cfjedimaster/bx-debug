@@ -1,0 +1,96 @@
+import ortus.boxlang.runtime.context.RequestBoxContext;
+
+class {
+
+	private function getDebug() {
+		/*
+		println(getBoxContext().getClass().name);
+		requestContext = getBoxContext().getRequestContext();
+		Removed due to bug
+		*/
+		requestContext = RequestBoxContext.getCurrent();
+		
+		return requestContext.computeAttachmentIfAbsent( "debug", ()->structNew() );
+	}
+
+	public function onRequestStart(data) {
+		debugData = getDebug();
+		debugData.requestStarted = getTickCount();
+		debugData.requestTemplate = data.args[1];
+
+		debugData.queries = [];
+
+		/*
+		Why a struct? Right now we don't have a clean way, via interceptors, to associate a network call
+		beginnig with one ending - there's no unique ID to connect them. So I'm going to use a structure
+		and assume you call url X once per request. This is NOT good - but for a first draft I'll try it. 
+
+		well shit that won't work either, we don't know the url in the response.
+		*/
+		debugData.http = {};
+
+		debugData.templateStack = [];
+	}
+
+	public function onRequestEnd() {
+		debugData = getDebug();
+		debugData.requestTotal = getTickCount() - debugData.requestStarted;
+
+	}
+
+	public function postQueryExecute(data) {
+		debugData = getDebug();
+
+		debugData.queries.append({
+			sql:data.sql, 
+			executionTime:data.executionTime,
+			records:data.result.recordCount
+		});
+
+	}
+
+	public function onHTTPRequest(data) {
+		/*
+		debugData = getDebug();
+		debugData.http[data.targetURI] = { started: getTickCount };
+		*/
+	}
+
+	public function onHTTPResponse(data) {
+		println('module post HTTP');
+		/*
+		debugData = getDebug();
+		*/
+		//debugData.http[
+		//println(data.result.responseHeader);
+		
+	}
+
+	public function preTemplateInvoke(data) {
+		println('preTemplateInvoke');
+		println(data.templatePath.absolutePath());
+
+		debugData = getDebug();
+		path = data.templatePath.absolutePath().toString();
+		debugData.templateStack.append({
+			path:path,
+			started:getTickCount()
+		});
+	}
+
+	public function postTemplateInvoke(data) {
+		println('postTemplateInvoke');
+		debugData = getDebug();
+
+		path = data.templatePath.absolutePath().toString();
+		/*
+		traverse up my stack until path match and set ended to now
+		*/
+		for(i=debugData.templateStack.len();i>0;i--) {
+			if(debugData.templateStack[i].path == path && !debugData.templateStack[i].keyExists('ended')) {
+				debugData.templateStack[i].ended = getTickCount();
+			}
+		}
+	}
+
+}
