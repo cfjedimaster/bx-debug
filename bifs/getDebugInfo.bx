@@ -1,0 +1,14 @@
+@BoxBIF
+class {
+
+	private function getDebug() {
+		requestContext = getBoxContext().getRequestContext()
+		return requestContext.computeAttachmentIfAbsent( "debug", ()->structNew() )
+	}
+
+
+    function invoke() {
+		return getDebug();
+    }
+
+}

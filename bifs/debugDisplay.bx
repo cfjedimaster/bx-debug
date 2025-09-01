@@ -12,6 +12,14 @@ class {
 	function init() {
 	}
 
+	function formatBytes(bytes) {
+		units = ['byte', 'kilobyte', 'megabyte', 'gigabyte', 'terabyte'];
+		i = floor(log(bytes) / log(1024));
+		value = bytes / 1024^i;
+
+		return numberFormat(value) & " #units[i+1]##value>1?'s':''#";
+	}
+
     function invoke() {
 		debug = getDebug();
 
@@ -32,7 +40,7 @@ class {
 				border-collapse: collapse;
 				border: 1px solid black;
 				width: 100%;
-				max-width: 500px;
+				max-width: 600px;
 			}
 
 			th, td {
@@ -62,11 +70,10 @@ class {
 			</thead>
 			<tbody>		
 
-
 			<bx:loop item="q" array="#debug.queries#">
 				<bx:output>
 					<tr>
-						<td>#q.sql#</td><td>#q.records#</td><td>#numberFormat(q.executionTime)#</td>
+						<td>#q.sql#</td><td>#q.records#</td><td>#numberFormat(q.executionTime)# ms</td>
 					</tr>
 				</bx:output>
 			</bx:loop>
@@ -76,6 +83,27 @@ class {
 		<p>No database activity.</p>
 		</bx:if>
 
+		<h2>HTTP</h2>
+
+		<bx:if debug.http.len() gt 0>
+			<table>
+			<thead>
+			<tr><th>URL</th><th>Size</th><th>Execution Time</tr>
+			</thead>
+			<tbody>		
+
+			<bx:loop item="q" array="#debug.http#">
+				<bx:output>
+					<tr>
+						<td>#q.url#</td><td>#formatBytes(q.size)#</td><td>#numberFormat(q.executionTime)# ms</td>
+					</tr>
+				</bx:output>
+			</bx:loop>
+			</tbody>
+			</table>
+		<bx:else>
+		<p>No HTTP activity.</p>
+		</bx:if>
 		<h2>Template Executions</h2>
 
 		<table>
@@ -101,7 +129,9 @@ class {
 
 		writeOutput(html);
 
-		writedump(var=debug,expand=false);
+		// may remove
+		writeOutput("<p>");
+		writedump(var=debug,expand=false,label="Raw Debug Dump");
 
     }
 

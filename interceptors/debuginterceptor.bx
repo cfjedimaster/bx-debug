@@ -19,15 +19,7 @@ class {
 		debugData.requestTemplate = data.args[1];
 
 		debugData.queries = [];
-
-		/*
-		Why a struct? Right now we don't have a clean way, via interceptors, to associate a network call
-		beginnig with one ending - there's no unique ID to connect them. So I'm going to use a structure
-		and assume you call url X once per request. This is NOT good - but for a first draft I'll try it. 
-
-		well shit that won't work either, we don't know the url in the response.
-		*/
-		debugData.http = {};
+		debugData.http = [];
 
 		debugData.templateStack = [];
 	}
@@ -49,27 +41,18 @@ class {
 
 	}
 
-	public function onHTTPRequest(data) {
-		/*
-		debugData = getDebug();
-		debugData.http[data.targetURI] = { started: getTickCount };
-		*/
-	}
-
 	public function onHTTPResponse(data) {
-		println('module post HTTP');
-		/*
+
 		debugData = getDebug();
-		*/
-		//debugData.http[
-		//println(data.result.responseHeader);
+		debugData.http.append({
+			executionTime:data.result.executionTime,
+			url:data.result.request.url.toString(),
+			size:data.result.fileContent.len()
+		});
 		
 	}
 
 	public function preTemplateInvoke(data) {
-		println('preTemplateInvoke');
-		println(data.templatePath.absolutePath());
-
 		debugData = getDebug();
 		path = data.templatePath.absolutePath().toString();
 		debugData.templateStack.append({
@@ -79,7 +62,6 @@ class {
 	}
 
 	public function postTemplateInvoke(data) {
-		println('postTemplateInvoke');
 		debugData = getDebug();
 
 		path = data.templatePath.absolutePath().toString();
@@ -93,4 +75,10 @@ class {
 		}
 	}
 
+	/*
+	public function postFunctionInvoke(data) {
+		writeln(data);
+		return;
+	}
+	*/
 }
