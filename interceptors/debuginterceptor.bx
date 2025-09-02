@@ -77,8 +77,8 @@ class {
 
 	/*
 	public function postFunctionInvoke(data) {
-		writeln(data);
 		return;
 	}
 	*/
+	
 }

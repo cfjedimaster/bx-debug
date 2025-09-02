@@ -3,7 +3,7 @@ class {
 	property name="moduleRecord";
 	property name="boxRuntime";
 
-	this.version = "0.0.1";
+	this.version = "0.0.2";
 	this.author = "Raymond Camden";
 	this.description = "Adds debug output support to BoxLang web apps.";
 	this.webURL = "https://github.com/cfjedimaster/bx-debug";
@@ -13,5 +13,25 @@ class {
 		interceptors = [
 			{ class='#moduleRecord.invocationPath#.interceptors.debuginterceptor' }
 		];
+
+		/*
+		warningThresholds settings are basically, if val > x, show it in red.
+		when time values are used, its ms
+
+		queryTime - if the query execution time >= x
+		queryRecords - if they query has >= x records
+		templateExecutionTime - if the template time >= x
+		httpExecutionTime - you get the idea
+		httpSize - if the size of the response >= x (bytes)
+		*/
+		settings = {
+			warningThresholds = {
+				queryTime: 2 * 1000, 
+				queryRecords: 1000, 
+				templateExecutionTime: 2 * 1000,
+				httpExecutionTime: 2 * 1000,
+				httpSize: 500000
+			}
+		}
 	}
 }

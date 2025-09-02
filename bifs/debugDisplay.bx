@@ -10,6 +10,7 @@ class {
 	}
 
 	function init() {
+
 	}
 
 	function formatBytes(bytes) {
@@ -47,6 +48,11 @@ class {
 				border: 1px solid black;
 				padding: 5px; 
 			}
+
+			.warning {
+				color: red;
+				font-weight: bold;
+			}
 		}
 		</style>
 
@@ -57,7 +63,7 @@ class {
 		<bx:output>
 		<p>
 		<strong>Request template:</strong> #debug.requestTemplate#<br>
-		<strong>Request duration:</strong> #numberFormat(debug.requestTotal)# ms<br>
+		<strong>Request duration:</strong> <span class="<bx:if debug.requestTotal gte variables.moduleRecord.settings.warningThresholds.templateExecutionTime>warning</bx:if>">#numberFormat(debug.requestTotal)# ms</span><br>
 		</p>
 		</bx:output>
 
@@ -73,7 +79,7 @@ class {
 			<bx:loop item="q" array="#debug.queries#">
 				<bx:output>
 					<tr>
-						<td>#q.sql#</td><td>#q.records#</td><td>#numberFormat(q.executionTime)# ms</td>
+						<td>#q.sql#</td><td><span class="<bx:if q.records gte variables.moduleRecord.settings.warningThresholds.queryRecords>warning</bx:if>">#q.records#</span></td><td><span class="<bx:if q.executionTime gte variables.moduleRecord.settings.warningThresholds.queryTime>warning</bx:if>">#numberFormat(q.executionTime)# ms</span></td>
 					</tr>
 				</bx:output>
 			</bx:loop>
@@ -95,7 +101,7 @@ class {
 			<bx:loop item="q" array="#debug.http#">
 				<bx:output>
 					<tr>
-						<td>#q.url#</td><td>#formatBytes(q.size)#</td><td>#numberFormat(q.executionTime)# ms</td>
+						<td>#q.url#</td><td><span class="<bx:if q.size gte variables.moduleRecord.settings.warningThresholds.httpSize>warning</bx:if>">#formatBytes(q.size)#</span></td><td><span class="<bx:if q.executionTime gte variables.moduleRecord.settings.warningThresholds.httpExecutionTime>warning</bx:if>">#numberFormat(q.executionTime)# ms</span></td>
 					</tr>
 				</bx:output>
 			</bx:loop>
@@ -115,7 +121,7 @@ class {
 		<bx:loop item="t" array="#debug.templateStack#">
 			<bx:output>
 				<tr>
-					<td>#t.path#</td><td>#numberFormat(t.ended-t.started)# ms</td>
+					<td>#t.path#</td><td><span class="<bx:if (t.ended-t.started) gte variables.moduleRecord.settings.warningThresholds.templateExecutionTime>warning</bx:if>">#numberFormat(t.ended-t.started)# ms</span></td>
 				</tr>
 			</bx:output>
 		</bx:loop>

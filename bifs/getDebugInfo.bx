@@ -6,7 +6,6 @@ class {
 		return requestContext.computeAttachmentIfAbsent( "debug", ()->structNew() )
 	}
 
-
     function invoke() {
 		return getDebug();
     }
