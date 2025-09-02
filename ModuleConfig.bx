@@ -3,7 +3,7 @@ class {
 	property name="moduleRecord";
 	property name="boxRuntime";
 
-	this.version = "0.0.2";
+	this.version = "0.0.3";
 	this.author = "Raymond Camden";
 	this.description = "Adds debug output support to BoxLang web apps.";
 	this.webURL = "https://github.com/cfjedimaster/bx-debug";

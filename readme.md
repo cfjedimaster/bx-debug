@@ -14,6 +14,7 @@ You also get `getDebugInfo()` which returns the debug info in a raw structure.
 
 | Date | Change |
 | ------ | ---------- |
+| September 2, 2025 | Added current application name and session count. |
 | September 2, 2025 | Added settings that will mark items that take too much time. |
 | September 1, 2025 | I had not committed in a while, but HTTP is supported now, as well as getDebugInfo |
 | May 14, 2025 | Initial Release to GitHub |

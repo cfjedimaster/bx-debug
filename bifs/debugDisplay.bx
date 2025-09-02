@@ -24,6 +24,8 @@ class {
     function invoke() {
 		debug = getDebug();
 
+		currentApp = getBoxContext()?.getApplicationContext()?.getApplication();
+
 		bx:saveContent variable="html" {
 		```
 		<style>
@@ -64,6 +66,11 @@ class {
 		<p>
 		<strong>Request template:</strong> #debug.requestTemplate#<br>
 		<strong>Request duration:</strong> <span class="<bx:if debug.requestTotal gte variables.moduleRecord.settings.warningThresholds.templateExecutionTime>warning</bx:if>">#numberFormat(debug.requestTotal)# ms</span><br>
+		<bx:if !isNull(currentApp)>
+		<strong>Current Application:</strong> #currentApp.getName()#<br>
+		<strong>Current Session Count:</strong> #currentApp.getSessionCount()#<br>
+		</bx:if>
+
 		</p>
 		</bx:output>
 
